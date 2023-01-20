@@ -1,0 +1,11 @@
+source https://api.nuget.org/v3/index.json
+
+storage: none
+framework: auto-detect
+nuget FSharp.Core
+
+nuget Avalonia.Desktop 0.10.15
+
+nuget JaggerJo.Avalonia.FuncUI
+nuget JaggerJo.Avalonia.FuncUI.DSL
+nuget JaggerJo.Avalonia.FuncUI.Elmish
