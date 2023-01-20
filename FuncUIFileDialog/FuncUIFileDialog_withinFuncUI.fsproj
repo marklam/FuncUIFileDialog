@@ -15,4 +15,5 @@
     <ProjectReference Include="..\Avalonia.FuncUI.Elmish\Avalonia.FuncUI.Elmish.fsproj" />
     <ProjectReference Include="..\Avalonia.FuncUI\Avalonia.FuncUI.fsproj" />
   </ItemGroup>
+  <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>

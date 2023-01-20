@@ -126,6 +126,5 @@ module Program =
         AppBuilder
             .Configure<App>()
             .UsePlatformDetect()
-            .With(Win32PlatformOptions(UseWgl = true)) // TODO - don't know why this is needed
             .UseSkia()
             .StartWithClassicDesktopLifetime(args)
