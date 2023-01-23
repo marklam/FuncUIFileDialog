@@ -1,6 +1,5 @@
 ﻿namespace TestApp
 
-open Elmish
 open Avalonia
 open Avalonia.Themes.Fluent
 open Avalonia.FuncUI.Hosts
