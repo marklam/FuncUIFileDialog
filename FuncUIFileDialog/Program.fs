@@ -1,79 +1,54 @@
-﻿namespace FuncUIFileDialog
+﻿namespace TestApp
 
-open System
 open Elmish
 open Avalonia
 open Avalonia.Themes.Fluent
 open Avalonia.FuncUI.Hosts
-open Avalonia.Controls.ApplicationLifetimes
-
 open Avalonia.Controls
+open Avalonia.Controls.ApplicationLifetimes
 open Avalonia.Layout
 open Avalonia.FuncUI
 open Avalonia.FuncUI.DSL
 open Avalonia.FuncUI.Elmish.ElmishHook
-open Avalonia.Threading
 
 type Model =
     {
-        ProjectFile : string option
+        Value : int option
     } with
-    static member Default = { ProjectFile = None }
-
-type WindowParams =
-    { Window : Window }
+    static member Default = { Value = None }
 
 type Msg =
-    | PickProjectFile
-    | SetProjectFile of string
-
-module Msg =
-    let update msg model =
-        match msg with
-        | PickProjectFile ->
-            let saveFileTask () =
-                async {
-                    return $"{System.DateTime.Now}. Press the button again."
-                }
-
-            model, Cmd.OfAsync.perform saveFileTask () SetProjectFile
-        | SetProjectFile f ->
-            { model with ProjectFile = Some f }, Cmd.none
+    | UpdateValue
 
 module TaskView =
-    let create key (model : IWritable<Model>) =
+    let update msg model =
+        printfn $"Msg.update {msg}"
+        match msg with
+        | UpdateValue ->
+            let v = (model.Value |> Option.defaultValue 0) + 1
+            { model with Value = Some v }, Cmd.none
+
+    let create key (_model : IWritable<Model>) =
         Component.create (key,
             fun ctx ->
-                let model = ctx.usePassed(model, renderOnChange = true)
-                let _, dispatch = ctx.useElmish (model, Msg.update)
-                let projectFile = model |> State.readMap (fun m -> m.ProjectFile)
+                printfn "TaskView render"
+                let model = ctx.usePassed(_model, renderOnChange = true)
+                let _, dispatch = ctx.useElmish (model, update)
+                let value = model |> State.readMap (fun m -> m.Value)
 
                 StackPanel.create [
-                    StackPanel.orientation Orientation.Vertical
+                    StackPanel.orientation Orientation.Horizontal
                     StackPanel.children [
-                        TextBlock.create [
-                            TextBlock.text "Here are the details of your project:"
-                        ]
-
-                        TextBlock.create [
-                            TextBlock.text "Project file:"
-                        ]
-
-                        StackPanel.create [
-                            StackPanel.orientation Orientation.Horizontal
-                            StackPanel.children [
-                                match projectFile.Current with
-                                | None ->
-                                    ()
-                                | Some p ->
-                                    TextBox.create [
-                                        TextBox.text p
-                                    ]
-                                Button.create [
-                                    Button.content "..."
-                                    Button.onClick (fun _ -> PickProjectFile |> dispatch)
-                                ]
+                        match value.Current with
+                        | None ->
+                            ()
+                        | Some v ->
+                            TextBlock.create [
+                                TextBlock.text (v.ToString())
                             ]
+                        Button.create [
+                            Button.content "Update"
+                            Button.onClick (fun _ -> printfn "Button click"; UpdateValue |> dispatch)
                         ]
                     ]
                 ]
@@ -83,6 +58,8 @@ module MainView =
     let create () =
         Component (
             fun ctx ->
+                printfn $"MainView render"
+
                 let model = ctx.useState (Model.Default)
 
                 Grid.create [
@@ -102,7 +79,7 @@ type MainWindow() =
     inherit HostWindow()
 
     do
-        base.Title   <- "FuncUIFileDialog"
+        base.Title   <- "Test"
         base.Content <- MainView.create ()
 
 type App() =
@@ -112,7 +89,7 @@ type App() =
         this.Styles.Add (FluentTheme(baseUri = null, Mode = FluentThemeMode.Dark))
 
     override this.OnFrameworkInitializationCompleted() =
-        this.Name <- "FuncUIFileDialog"
+        this.Name <- "Test"
         match this.ApplicationLifetime with
         | :? IClassicDesktopStyleApplicationLifetime as desktopLifetime ->
             let mainWindow = MainWindow()
@@ -124,7 +101,7 @@ type App() =
 
 module Program =
 
-    [<EntryPoint; STAThread>]
+    [<EntryPoint>]
     let main(args: string[]) =
         AppBuilder
             .Configure<App>()
