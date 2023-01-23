@@ -28,26 +28,24 @@ type Msg =
     | SetProjectFile of string
 
 module Msg =
-    let handler windowParams msg model =
+    let update msg model =
         match msg with
         | PickProjectFile ->
             let saveFileTask () =
-                Dispatcher.UIThread.InvokeAsync<string>(
-                    System.Func<System.Threading.Tasks.Task<string>>(fun () ->
-                    let dialog = SaveFileDialog(Title = "Pick the project file")
-                    dialog.ShowAsync windowParams.Window
-                    ))
+                async {
+                    return $"{System.DateTime.Now}. Press the button again."
+                }
 
-            model, Cmd.OfTask.perform saveFileTask () SetProjectFile
+            model, Cmd.OfAsync.perform saveFileTask () SetProjectFile
         | SetProjectFile f ->
             { model with ProjectFile = Some f }, Cmd.none
 
 module TaskView =
-    let create update key (model : IWritable<Model>) =
+    let create key (model : IWritable<Model>) =
         Component.create (key,
             fun ctx ->
-                let model = ctx.usePassed model
-                let _, dispatch = ctx.useElmish (model, update)
+                let model = ctx.usePassed(model, renderOnChange = true)
+                let _, dispatch = ctx.useElmish (model, Msg.update)
                 let projectFile = model |> State.readMap (fun m -> m.ProjectFile)
 
                 StackPanel.create [
@@ -61,24 +59,28 @@ module TaskView =
                             TextBlock.text "Project file:"
                         ]
 
-                        match projectFile.Current with
-                        | None ->
-                            Button.create [
-                                Button.content "Select a file"
-                                Button.onClick (fun _ -> PickProjectFile |> dispatch)
+                        StackPanel.create [
+                            StackPanel.orientation Orientation.Horizontal
+                            StackPanel.children [
+                                match projectFile.Current with
+                                | None ->
+                                    ()
+                                | Some p ->
+                                    TextBox.create [
+                                        TextBox.text p
+                                    ]
+                                Button.create [
+                                    Button.content "..."
+                                    Button.onClick (fun _ -> PickProjectFile |> dispatch)
+                                ]
                             ]
-                        | Some p ->
-                            TextBox.create [
-                                TextBox.text p
-                            ]
+                        ]
                     ]
                 ]
         )
 
 module MainView =
-    let create windowParams =
-        let update = Msg.handler windowParams
-
+    let create () =
         Component (
             fun ctx ->
                 let model = ctx.useState (Model.Default)
@@ -89,19 +91,19 @@ module MainView =
                         ContentControl.create [
                             Grid.row 0
                             ContentControl.content (
-                                TaskView.create update "taskview" model
+                                TaskView.create "taskview" model
                             )
                         ]
                     ]
                 ]
         )
 
-type MainWindow() as this =
+type MainWindow() =
     inherit HostWindow()
 
     do
         base.Title   <- "FuncUIFileDialog"
-        base.Content <- MainView.create { Window = this }
+        base.Content <- MainView.create ()
 
 type App() =
     inherit Application()
