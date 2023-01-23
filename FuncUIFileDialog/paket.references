@@ -1,5 +1,5 @@
 FSharp.Core
-JaggerJo.Avalonia.FuncUI
-JaggerJo.Avalonia.FuncUI.DSL
-JaggerJo.Avalonia.FuncUI.Elmish
+Avalonia.FuncUI
+Avalonia.FuncUI.Elmish
 Avalonia.Desktop
+Avalonia.Themes.Fluent

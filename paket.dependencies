@@ -4,6 +4,7 @@ storage: none
 framework: auto-detect
 nuget FSharp.Core
 
-nuget JaggerJo.Avalonia.FuncUI        strategy:min
-nuget JaggerJo.Avalonia.FuncUI.DSL    strategy:min
-nuget JaggerJo.Avalonia.FuncUI.Elmish strategy:min
+nuget Avalonia.FuncUI        strategy:min
+nuget Avalonia.FuncUI.Elmish strategy:min
+nuget Avalonia.Desktop       11.0.0-preview4 strategy:min
+nuget Avalonia.Themes.Fluent 11.0.0-preview4 strategy:min

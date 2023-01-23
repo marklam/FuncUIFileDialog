@@ -1,6 +1,7 @@
 ﻿namespace FuncUIFileDialog
 
 open System
+open Elmish
 open Avalonia
 open Avalonia.Themes.Fluent
 open Avalonia.FuncUI.Hosts
@@ -30,16 +31,16 @@ module Msg =
     let handler windowParams msg model =
         match msg with
         | PickProjectFile ->
-            let saveFileTask =
+            let saveFileTask () =
                 Dispatcher.UIThread.InvokeAsync<string>(
                     System.Func<System.Threading.Tasks.Task<string>>(fun () ->
                     let dialog = SaveFileDialog(Title = "Pick the project file")
                     dialog.ShowAsync windowParams.Window
                     ))
 
-            model, saveFileTask.Result |> SetProjectFile |> Cmd.ofMsg
+            model, Cmd.OfTask.perform saveFileTask () SetProjectFile
         | SetProjectFile f ->
-            { model with ProjectFile = Some f }, Cmd.None
+            { model with ProjectFile = Some f }, Cmd.none
 
 module TaskView =
     let create update key (model : IWritable<Model>) =
