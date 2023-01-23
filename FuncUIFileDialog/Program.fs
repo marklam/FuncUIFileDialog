@@ -13,28 +13,33 @@ open Avalonia.FuncUI.Elmish.ElmishHook
 
 type Model =
     {
-        Value : int option
+        Value1 : int option
+        Value2 : string option
     } with
-    static member Default = { Value = None }
+    static member Default = { Value1 = None; Value2 = None }
 
 type Msg =
-    | UpdateValue
+    | UpdateValue1
+    | UpdateValue2
 
-module TaskView =
+module Views =
     let update msg model =
         printfn $"Msg.update {msg}"
         match msg with
-        | UpdateValue ->
-            let v = (model.Value |> Option.defaultValue 0) + 1
-            { model with Value = Some v }, Cmd.none
+        | UpdateValue1 ->
+            let v = (model.Value1 |> Option.defaultValue 0) + 1
+            { model with Value1 = Some v }, Cmd.none
+        | UpdateValue2 ->
+            let v = (model.Value2 |> Option.defaultValue "") + "."
+            { model with Value2 = Some v }, Cmd.none
 
-    let create key (_model : IWritable<Model>) =
+    let view1 key (_model : IWritable<Model>) =
         Component.create (key,
             fun ctx ->
-                printfn "TaskView render"
+                printfn "view1 render"
                 let model = ctx.usePassed(_model, renderOnChange = true)
                 let _, dispatch = ctx.useElmish (model, update)
-                let value = model |> State.readMap (fun m -> m.Value)
+                let value = model |> State.readMap (fun m -> m.Value1)
 
                 StackPanel.create [
                     StackPanel.orientation Orientation.Horizontal
@@ -48,7 +53,33 @@ module TaskView =
                             ]
                         Button.create [
                             Button.content "Update"
-                            Button.onClick (fun _ -> printfn "Button click"; UpdateValue |> dispatch)
+                            Button.onClick (fun _ -> printfn "View1 Button click"; UpdateValue1 |> dispatch)
+                        ]
+                    ]
+                ]
+        )
+
+    let view2 key (_model : IWritable<Model>) =
+        Component.create (key,
+            fun ctx ->
+                printfn "view2 render"
+                let model = ctx.usePassed(_model, renderOnChange = true)
+                let _, dispatch = ctx.useElmish (model, update)
+                let value = model |> State.readMap (fun m -> m.Value2)
+
+                StackPanel.create [
+                    StackPanel.orientation Orientation.Horizontal
+                    StackPanel.children [
+                        match value.Current with
+                        | None ->
+                            ()
+                        | Some v ->
+                            TextBlock.create [
+                                TextBlock.text v
+                            ]
+                        Button.create [
+                            Button.content "Update"
+                            Button.onClick (fun _ -> printfn "View2 Button click"; UpdateValue2 |> dispatch)
                         ]
                     ]
                 ]
@@ -63,12 +94,18 @@ module MainView =
                 let model = ctx.useState (Model.Default)
 
                 Grid.create [
-                    Grid.rowDefinitions "*"
+                    Grid.rowDefinitions "*,*"
                     Grid.children [
                         ContentControl.create [
                             Grid.row 0
                             ContentControl.content (
-                                TaskView.create "taskview" model
+                                Views.view1 "view1" model
+                            )
+                        ]
+                        ContentControl.create [
+                            Grid.row 1
+                            ContentControl.content (
+                                Views.view2 "view2" model
                             )
                         ]
                     ]
