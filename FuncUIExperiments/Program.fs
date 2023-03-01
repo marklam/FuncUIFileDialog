@@ -1,7 +1,6 @@
 ﻿namespace FuncUIFileDialog
 
 open System
-open Elmish
 open Avalonia
 open Avalonia.Themes.Fluent
 open Avalonia.FuncUI.Hosts
@@ -59,20 +58,24 @@ module MainView =
 
     let create () =
         let scales = [ 50; 100; 150; 200 ]
+        let emptyPlotModel = PlotModel()
         Component (
             fun ctx ->
                 let clip = ctx.useState Avalonia.Rect.Empty
                 let rect = ctx.useState Avalonia.Rect.Empty
                 let scale = ctx.useState(0)
-                let plotModel = ctx.useState (plotModel clip rect)
-
-                Diagnostics.Debug.WriteLine $"Hooking up a subscription"
-                scale.Observable
-                |> Observable.subscribe (
-                        fun i ->
-                            updateAxes plotModel.Current i
-                    )
-                |> ctx.trackDisposable
+                let pmodel = ctx.useState emptyPlotModel
+                ctx.useEffect ((fun () -> pmodel.Set (plotModel clip rect)), [EffectTrigger.AfterInit])
+                //ctx.useEffect ((
+                //    fun () ->
+                //        Diagnostics.Debug.WriteLine $"Hooking up a subscription"
+                //        scale.Observable
+                //        |> Observable.subscribe (
+                //                fun i ->
+                //                    updateAxes plotModel.Current i
+                //            )
+                //), [EffectTrigger.AfterInit])
+                ctx.useEffect ((fun () -> updateAxes pmodel.Current scale.Current), [EffectTrigger.AfterChange scale])
 
                 Grid.create [
                     Grid.columnDefinitions "Auto, *"
@@ -92,7 +95,7 @@ module MainView =
                             Grid.column 1
                             Grid.children [
                                 PlotView.create [
-                                    PlotView.model plotModel.Current
+                                    PlotView.model pmodel.Current
                                 ]
                                 Canvas.create [
                                     Visual.clip (Media.RectangleGeometry(clip.Current) :> Media.Geometry)
