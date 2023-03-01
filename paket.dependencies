@@ -4,7 +4,11 @@ storage: none
 framework: auto-detect
 nuget FSharp.Core
 
-nuget Avalonia.FuncUI        strategy:min
-nuget Avalonia.FuncUI.Elmish strategy:min
-nuget Avalonia.Desktop       11.0.0-preview5 strategy:min
-nuget Avalonia.Themes.Fluent 11.0.0-preview5 strategy:min
+nuget Avalonia.FuncUI        0.6.0-preview7 strategy:min
+nuget Avalonia.FuncUI.Elmish 0.6.0-preview7 strategy:min
+nuget Avalonia.Desktop       11.0.0-preview4 strategy:min
+nuget Avalonia.Themes.Fluent 11.0.0-preview4 strategy:min
+
+# Pre-release Oxyplot.Avalonia
+source https://www.myget.org/F/melonoxyplottesting/api/v3/index.json
+nuget OxyPlot.Avalonia 2.1.0-av11-preview4
