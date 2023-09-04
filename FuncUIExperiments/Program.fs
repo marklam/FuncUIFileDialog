@@ -14,6 +14,7 @@ open OxyPlot
 open OxyPlot.Avalonia
 open Avalonia.FuncUI.Types
 open Avalonia.FuncUI.Builder
+open Avalonia.Markup.Xaml.Styling
 
 [<AutoOpen>]
 module PlotView  =
@@ -61,8 +62,8 @@ module MainView =
         let emptyPlotModel = PlotModel()
         Component (
             fun ctx ->
-                let clip = ctx.useState Avalonia.Rect.Empty
-                let rect = ctx.useState Avalonia.Rect.Empty
+                let clip = ctx.useState (Avalonia.Rect())
+                let rect = ctx.useState (Avalonia.Rect())
                 let scale = ctx.useState(0)
                 let pmodel = ctx.useState emptyPlotModel
                 ctx.useEffect ((fun () -> pmodel.Set (plotModel clip rect)), [EffectTrigger.AfterInit])
@@ -130,8 +131,9 @@ type App() =
     inherit Application()
 
     override this.Initialize() =
-        this.Styles.Add (FluentTheme(baseUri=null))
-        this.Styles.Add (OxyPlot.Avalonia.Themes.Default())
+        this.Styles.Add (FluentTheme())
+        let oxyplot = StyleInclude(baseUri=null, Source = Uri "avares://OxyPlot.Avalonia/Themes/Default.axaml") // TODO - check that OxyPlot.Avalonia.Themes.Default() has gone in real release
+        this.Styles.Add oxyplot
 
     override this.OnFrameworkInitializationCompleted() =
         this.Name <- "FuncUIExperiments"
