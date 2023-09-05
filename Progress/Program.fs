@@ -80,7 +80,7 @@ module Counter =
             ProgressBar.value item.ProgressStatus
             ProgressBar.horizontalAlignment HorizontalAlignment.Stretch
             ProgressBar.showProgressText true
-            ProgressBar.classes ["circular"]
+            ProgressBar.classes ["circular"; "no-transitions"] 
         ]
 
     let view (state: State) (dispatch) =
