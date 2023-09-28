@@ -100,12 +100,38 @@ module Counter =
                     ListBox.selectedItem (selPeakGroup.Current |> Option.toRef)
                 ]
         ))
+    let itemscontrol templateForView (selPeakGroup : IWritable<Item option>) (peaksList : ImmutableList<Item>) =
+        Component.create ("listbox", (
+            fun ctx ->
+                let selPeakGroup = ctx.usePassed selPeakGroup
+                ItemsControl.create [
+                    ItemsControl.itemsPanel virtualizingStackPanel
+
+                    ItemsControl.dataItems peaksList
+                    ItemsControl.itemTemplate (DataTemplateView.create<IView<_>,Item> templateForView)
+                    //ItemsControl.onSelectedItemChanged (
+                    //    function
+                    //    | :? Item as t ->
+                    //        selPeakGroup.Set (Some t)
+                    //    | _ ->
+                    //        selPeakGroup.Set None
+                    //)
+                    //ItemsControl.selectedItem (selPeakGroup.Current |> Option.toRef)
+                ]
+        ))
+
 
     let listOfGrids (selPeakGroup : IWritable<Item option>) (peaksList : ImmutableList<Item>) =
         listbox itemTemplateGrid selPeakGroup peaksList
 
     let listOfComponents (selPeakGroup : IWritable<Item option>) (peaksList : ImmutableList<Item>) =
         listbox itemTemplateComponent selPeakGroup peaksList
+
+    let itemsOfGrids (selPeakGroup : IWritable<Item option>) (peaksList : ImmutableList<Item>) =
+        itemscontrol itemTemplateGrid selPeakGroup peaksList
+
+    let itemsOfComponents (selPeakGroup : IWritable<Item option>) (peaksList : ImmutableList<Item>) =
+        itemscontrol itemTemplateComponent selPeakGroup peaksList
 
     let view () =
         Component (
@@ -126,7 +152,8 @@ module Counter =
                             Grid.row 1
                             Grid.column 0
                             Grid.children [
-                                listOfGrids selectedItem state.Current.ItemsByIndex
+                                //listOfGrids selectedItem state.Current.ItemsByIndex
+                                itemsOfGrids selectedItem state.Current.ItemsByIndex
                             ]
                         ]
 
@@ -139,7 +166,8 @@ module Counter =
                             Grid.row 1
                             Grid.column 1
                             Grid.children [
-                                listOfComponents selectedItem state.Current.ItemsByIndex
+                                //listOfComponents selectedItem state.Current.ItemsByIndex
+                                itemsOfComponents selectedItem state.Current.ItemsByIndex
                             ]
                         ]
                     ]
