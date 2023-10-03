@@ -108,19 +108,19 @@ module Counter =
         Component.create ("listbox", (
             fun ctx ->
                 let selPeakGroup = ctx.usePassed selPeakGroup
-                ItemsControl.create [
-                    ItemsControl.itemsPanel virtualizingStackPanel
+                ListBox.create [
+                    ListBox.itemsPanel virtualizingStackPanel
 
-                    ItemsControl.dataItems peaksList
-                    ItemsControl.itemTemplate (DataTemplateView.create<IView<_>,Item> templateForView)
-                    //ItemsControl.onSelectedItemChanged (
-                    //    function
-                    //    | :? Item as t ->
-                    //        selPeakGroup.Set (Some t)
-                    //    | _ ->
-                    //        selPeakGroup.Set None
-                    //)
-                    //ItemsControl.selectedItem (selPeakGroup.Current |> Option.toRef)
+                    ListBox.dataItems peaksList
+                    ListBox.itemTemplate (DataTemplateView.create<IView<_>,Item> templateForView)
+                    ListBox.onSelectedItemChanged (
+                        function
+                        | :? Item as t ->
+                            selPeakGroup.Set (Some t)
+                        | _ ->
+                            selPeakGroup.Set None
+                    )
+                    ListBox.selectedItem (selPeakGroup.Current |> Option.toRef)
                 ]
         ))
 

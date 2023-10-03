@@ -12,18 +12,9 @@ open Avalonia.FuncUI.Types
 open Avalonia.Layout
 open Avalonia.Themes.Fluent
 
-module Component =
-    let createWithAttributes (key: string, attrs, render: IComponentContext -> IView) : IView<Component> =
-        { ViewType = typeof<Component>
-          ViewKey = ValueSome key
-          Attrs = attrs
-          Outlet = ValueNone
-          ConstructorArgs = [| render :> obj |] }
-        :> IView<Component>
-
 module Counter =
-    let countComponent (count : IReadable<int>) attrs =
-        Component.createWithAttributes ("count", attrs,
+    let countComponent (count : IReadable<int>) =
+        Component.create ("count",
             fun ctx ->
                 let count = ctx.usePassedRead count
                 TextBlock.create [
@@ -55,11 +46,13 @@ module Counter =
                         Button.onClick (fun _ -> state.Current + 1 |> state.Set)
                         Button.content "+"
                     ]
-                    countComponent state [
+                    countComponent state
+                    |> View.withAttrs [
                         Grid.row 1
                         Grid.column 0
                     ]
-                    countComponent state [
+                    countComponent state
+                    |> View.withAttrs [
                         Grid.row 1
                         Grid.column 1
                     ]

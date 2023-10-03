@@ -2,3 +2,4 @@ FSharp.Core
 Avalonia.FuncUI.Elmish
 Avalonia.Desktop
 Avalonia.Themes.Fluent
+Avalonia.Diagnostics

@@ -54,7 +54,7 @@ module Counter =
         printfn "itemTemplate constructed with annotations version %d" annotations.Current.Version
         fun (item : Item) ->
             Component.create ("item", (
-                fun ctx -> 
+                fun ctx ->
                     let annotations = ctx.usePassedRead annotations
                     if item.Index = 0 then printfn "itemTemplate invoked for item %d with annotations version %d" item.Index annotations.Current.Version
                     Grid.create [

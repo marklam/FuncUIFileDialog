@@ -5,6 +5,7 @@ open Avalonia
 open Avalonia.FuncUI.Hosts
 open Avalonia.Controls.ApplicationLifetimes
 open Avalonia.Controls
+open Avalonia.Diagnostics
 open Avalonia.FuncUI
 open Avalonia.FuncUI.DSL
 open Avalonia.FuncUI.Types
@@ -13,6 +14,7 @@ open System.Collections.Immutable
 open Avalonia.Controls.Templates
 open Avalonia.Media
 open Avalonia.Themes.Fluent
+open Avalonia.Input
 
 module Option =
     let toRef (o : 't option) =
@@ -79,7 +81,7 @@ module Counter =
         ))
 
     let itemTemplateGrid (item : Item) =
-            grid item
+        grid item
 
     let listbox templateForView (selPeakGroup : IWritable<Item option>) (peaksList : ImmutableList<Item>) =
         Component.create ("listbox", (
@@ -100,23 +102,24 @@ module Counter =
                     ListBox.selectedItem (selPeakGroup.Current |> Option.toRef)
                 ]
         ))
+
     let itemscontrol templateForView (selPeakGroup : IWritable<Item option>) (peaksList : ImmutableList<Item>) =
         Component.create ("listbox", (
             fun ctx ->
                 let selPeakGroup = ctx.usePassed selPeakGroup
-                ItemsControl.create [
-                    ItemsControl.itemsPanel virtualizingStackPanel
+                ListBox.create [
+                    ListBox.itemsPanel virtualizingStackPanel
 
-                    ItemsControl.dataItems peaksList
-                    ItemsControl.itemTemplate (DataTemplateView.create<IView<_>,Item> templateForView)
-                    //ItemsControl.onSelectedItemChanged (
-                    //    function
-                    //    | :? Item as t ->
-                    //        selPeakGroup.Set (Some t)
-                    //    | _ ->
-                    //        selPeakGroup.Set None
-                    //)
-                    //ItemsControl.selectedItem (selPeakGroup.Current |> Option.toRef)
+                    ListBox.dataItems peaksList
+                    ListBox.itemTemplate (DataTemplateView.create<IView<_>,Item> templateForView)
+                    ListBox.onSelectedItemChanged (
+                        function
+                        | :? Item as t ->
+                            selPeakGroup.Set (Some t)
+                        | _ ->
+                            selPeakGroup.Set None
+                    )
+                    ListBox.selectedItem (selPeakGroup.Current |> Option.toRef)
                 ]
         ))
 
@@ -174,7 +177,7 @@ module Counter =
                 ]
         )
 
-type MainWindow() =
+type MainWindow() as this =
     inherit HostWindow()
     do
         base.Title <- "Counter Example"
@@ -182,6 +185,9 @@ type MainWindow() =
         base.Width <- 400.0
 
         base.Content <- Counter.view()
+#if DEBUG
+        this.AttachDevTools(KeyGesture(Key.F12))
+#endif
 
 type App() =
     inherit Application()
