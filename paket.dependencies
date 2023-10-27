@@ -14,3 +14,4 @@ source https://worldbeater.pkgs.visualstudio.com/OxyPlot.Avalonia/_packaging/Oxy
 nuget AvaloniaOU.OxyPlot prerelease
 nuget RangeSlider.Avalonia
 nuget Material.Avalonia
+nuget Avalonia.Diagnostics
