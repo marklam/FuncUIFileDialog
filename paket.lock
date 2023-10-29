@@ -119,6 +119,6 @@ NUGET
     Tmds.DBus.Protocol (0.15)
       System.IO.Pipelines (>= 6.0)
   remote: https://worldbeater.pkgs.visualstudio.com/OxyPlot.Avalonia/_packaging/OxyPlot.Avalonia-CI/nuget/v3/index.json
-    AvaloniaOU.OxyPlot (2.1.2-20230911.1)
+    AvaloniaOU.Oxyplot (2.1.2-20230911.1)
       Avalonia (>= 11.0)
       OxyPlot.Core (>= 2.1.2)

@@ -1,17 +1,16 @@
-source https://api.nuget.org/v3/index.json
-
 storage: none
 framework: auto-detect
-nuget FSharp.Core
+source https://api.nuget.org/v3/index.json
 
+# Pre-release OxyPlot.Avalonia
+source https://worldbeater.pkgs.visualstudio.com/OxyPlot.Avalonia/_packaging/OxyPlot.Avalonia-CI/nuget/v3/index.json
+nuget AvaloniaOU.OxyPlot prerelease
+
+nuget FSharp.Core
 nuget Avalonia.FuncUI
 nuget Avalonia.FuncUI.Elmish
 nuget Avalonia.Desktop strategy:min
 nuget Avalonia.Themes.Fluent
-
-# Pre-release Oxyplot.Avalonia
-source https://worldbeater.pkgs.visualstudio.com/OxyPlot.Avalonia/_packaging/OxyPlot.Avalonia-CI/nuget/v3/index.json
-nuget AvaloniaOU.OxyPlot prerelease
 nuget RangeSlider.Avalonia
 nuget Material.Avalonia
 nuget Avalonia.Diagnostics
